@@ -1,0 +1,22 @@
+\begin{thebibliography}{3}
+\expandafter\ifx\csname natexlab\endcsname\relax\def\natexlab#1{#1}\fi
+
+\bibitem[{Cannon(1984)}]{1dheat}
+{\sc Cannon, J.~R.}
+\newblock {\em The One-dimensional heat equation\/}.
+\newblock Reading, Massachusetts [etc] : Addison-Wesley, 1984.
+\newblock ISBN 0201135221.
+
+\bibitem[{Fourier(1822)}]{fourier}
+{\sc Fourier, J. B.~J.}
+\newblock {\em Théorie Analytique de la Chaleur\/}.
+\newblock Cambridge University Press, 1822.
+\newblock ISBN 9780511693229.
+
+\bibitem[{Isaacson y Keller(1966)}]{anummeth}
+{\sc Isaacson, E.} y {\sc Keller, H.~B.}
+\newblock {\em Analysis of Numerical Methods\/}.
+\newblock John Wiley and Sons, 1966.
+\newblock ISBN 9780471428657.
+
+\end{thebibliography}

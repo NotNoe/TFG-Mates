@@ -1,0 +1,88 @@
+\chapter{Ecuación del calor}
+\label{cap:heat}
+\begin{resumen}
+	En este capítulos desarrollaremos dos métodos numéricos, basado en las diferencias finitas, para aproximar la solución a la ecuación del calor en una  y dos dimensiones.
+\end{resumen}
+
+\section{Introducción}
+En \emph{Théorie Analytique de la Chaleur}, \citeauthor{fourier} define la ley de la conducción térmica
+\[
+	\textbf{q}=-k\nabla T
+\]
+
+\section{Caso lineal}
+En el caso unidimensional, mediante un cambio de variable podemos omitir la constante $k$ \citep[ver]{1dheat}, por lo que la ecuación podemos reducirla a
+
+\begin{equation}\label{eq:1dheat}
+	\frac{\partial u}{\partial t} = \frac{\partial ^2u}{\partial x^2}
+\end{equation}
+
+Pueden pedirse diferentes condiciones iniciales para asegurar la existencia y unicidad de \ref{eq:1dheat}, pero nosotros utilizaremos en concreto las condiciones
+\begin{equation}
+	u(x,0)=f(x) \hspace{20px} -\infty\leq x \leq \infty
+\end{equation}
+
+El problema de valor inicial que hemos definido tiene como dominio un rectángulo con uno de sus lados abierto hacia el infinito. Si fijamos $T>0$ tenemos ahora un rectángulo con el que trabajaremos. Definimos pues $B_T$ como la frontera del rectángulo y $D_T$ el interior de este, y por último definimos $D=D_T\cup B_T$.
+
+\subsection{Existencia y unicidad}
+
+Antes de estudiar la existencia y unicidad de la solución, necesitamos definir un concepto.
+\begin{definicion}[Función continua a trozos]
+	Una función es continua a trozos si es continua en todos sus puntos salvo en una cantidad finita de puntos.
+\end{definicion}
+
+Ahora enunciamos unas condiciones para la unicidad de las soluciones
+
+\begin{teorema}[Unicidad]
+	Sean $u$ y $v$ soluciones de la ecuación \ref{eq:1dheat} en $D_T$ continuas en $D$, si $u=v$ en $B_T$ entonces $u=v$ en$D$
+\end{teorema}
+
+\begin{teorema}[Unicidad extendida]
+	Sean $u$ y $v$ soluciones de la ecuación \ref{eq:1dheat} en $D_T$ continuas a trozos en $D$ con una cantidad finita de discontinuidades acotadas, si $u=v$ en $B_T$ (excepto los puntos de discontinuidad) entonces $u=v$ en $D$
+\end{teorema}
+
+Estos teoremas nos dicen que bastan con comprobar que todas las soluciones coinciden en los límites del rectángulo para ver que la solución es única.
+
+\begin{proof}
+	Ver \citet{1dheat}, p.22
+\end{proof}
+
+
+
+\begin{teorema}[Existencia y unicidad]\label{teo:exis_uni_1dheat}
+	Sean f, $\alpha$ y $\beta$ funciones continuas a trozos, la función
+	
+	\begin{multline}\label{eq:sol1dheat}
+		u(x,t) = \int_{a}^{b}\theta(x-\xi,t)-\theta(x+\xi,t)f(\xi)d\xi \\
+		- 2\int_{0}^{t}\frac{\partial \theta}{\partial x}(x, t-\tau)\alpha(\tau)d\tau+2\int_{0}^{t}\frac{\partial\theta}{\partial x}(x-1,t-\tau)\beta(\tau)d(\tau)
+	\end{multline}
+	
+	donde $\theta(x,t)$ y $K(x,t)$ se definen como
+	\[
+		\theta(x,t)=\sum_{m=-\infty}^{\infty}K(x+2m,t) \hspace{15px} t>0
+	\]\[
+		K(x,t)=\frac{e^{\frac{-x^2}{4t}}}{\sqrt{4\pit}}\hspace{15px} t>0
+	\]
+	
+	Es la única solución acotada del problema del valor inicial
+	\begin{equation}\label{eq:pvi1dheat}
+		\begin{cases}
+			\frac{\partial u}{\partial t} = \frac{\partial ^2u}{\partial x^2} \hspace{20px}a<x<b, \hspace{10px} 0<t, \\
+			u(x,0)=f(x), \hspace{15px} a<x<b, \\
+			u(a,t)=\alpha(t), \hspace{15px} 0<t, \\
+			u(b,t)=\beta(t), \hspace{15px} 0<t.
+		\end{cases}
+	\end{equation}
+	
+\end{teorema}
+
+\begin{proof}
+	Puede verse en \cite{1dheat} que en efecto \ref{eq:sol1dheat} es solución de la ecuación del calor, por lo que solo tenemos que preocuparnos por la unicidad. Esto es inmediato por el teorema \ref{teo:exis_uni_1dheat}, ya que las condiciones iniciales fijan el valor de cualquier solución en $B_T$.
+\end{proof}
+
+Ahora podemos asegurar que \ref{eq:pvi1dheat} tiene una única solución, por lo que podemos proceder a aproximarla con un método de diferencias finitas.
+
+\subsection{Aproximación de la solución}
+
+
+

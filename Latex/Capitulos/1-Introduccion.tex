@@ -1,0 +1,49 @@
+\chapter{Introducción}
+\label{cap:introduccion}
+
+\begin{resumen}
+	En este capítulo pretendemos introducir los objetivos de este trabajo
+\end{resumen}
+
+\section{Motivación}
+Desde el inicio de la computación, se han desarrollado métodos numéricos para aproximar soluciones de ecuaciones que no podemos resolver de manera analítica (o cuya solución exacta no se conoce). Con el auge de la computación en \ac{GPU}, que permite computar los datos en paralelo, se pueden implementar estos mismos métodos de formas más eficientes para lograr mejores resultados.
+
+
+\section{Objetivos}
+En este trabajo pretendemos estudiar la implementación de métodos de diferencias finitas en la \ac{GPU} y su mejora de eficiencia en las ecuaciones de \emph{Laplace}, del calor y de ondas.
+
+
+\section{Nociones generales}
+Primero de todo necesitaremos hacer un estudio matemático sobre las ecuaciones diferenciales que trataremos. Todos los algoritmos que vamos a hacer están basados en el método de las diferencias finitas, que consiste en hacer una aproximación de las derivadas por un cociente incremental en puntos cercanos. Para hacer esto, necesitaremos definir sobre todos los problemas una malla discreta de puntos, y serán en estos donde hallemos soluciones aproximadas de las soluciones.
+
+\subsection{Notación}
+Las mallas son una discretización del dominio de las funciones, que en caso de las lineales será bidimensional y en el caso de las planas será tridimensional (ya que siempre hay que añadir el tiempo como dimensión). En todos los casos llamaremos $\Delta t$, $\Delta x$ y $\Delta y$ al espacio entre puntos de la malla en cada dimensión.
+
+Los diferentes algoritmos que implementemos tomarán como entrada las condiciones iniciales del problema de valor inicial, así como cualquier parámetro que requiera la ecuación. Además también tomarán el intervalo sobre el que trabajamos (la forma de este variará en cada problema) y el número de puntos que queremos en cada dimensión de la malla.
+
+Además, siguiendo con el convenio establecido por \citet{anummeth}, denotaremos los cocientes incrementales (omitiendo $x$, $y$ y $t$ cuando no haya lugar a confusión)
+\[
+\begin{cases}
+	u_x \equiv \frac{u(x+\Delta x,y,t)-u(x,y,t)}{\Delta x} \\
+	u_{\overline{x}} \equiv \frac{u(x,y,t)-u(x-\Delta x,y,t)}{\Delta x} \\
+	u_{\hat{x}} \equiv \frac{1}{2}[u_x(x,y,t)-u_{\overline{x}}(x,y,t)]
+\end{cases}
+\]
+también denotamos los puntos de la malla como $x_i=x_0+i\Delta x$, $y_j=y_0+j\Delta y$ y $t_k=t_0+k\Delta t$, y el valor de la función en estos puntos como 
+$
+u(x_i,t_k) \equiv u_{i,j}$ y $ u(x_i,y_j,t_k) \equiv u^k_{i,j}$
+
+
+\section{Plan de trabajo}
+Para realizar el estudio, los lenguajes de programación que utilizaremos serán CUDA (una extensión de C++ que permite la ejecución de funciones -llamadas \emph{kernels}- en la \ac{GPU}) y Python, que tiene una librería llamada pycuda para ejecutar código \ac{CUDA}. Además, todos los programas aquí mostrados y los resultados obtenidos serán ejecutados en la misma máquina, con las siguientes especificaciones, no obstante, los programas están pensados para poder ejecutarse en cualquier máquina\footnote{Si se desea utilizar el script "generateMod.py" en un sistema basado en Windows o MAC, podría ser necesario hacer unos pocos cambios para adaptarse a las distintas formas de nombrar las rutas en estos sistemas.}
+
+\begin{description}
+	\item[Procesador] Intel© Core™ i5-10400F CPU @ 2.90GHz × 6
+	\item[RAM] 15.5 GiB
+	\item[GPU] NVIDIA Corporation GA104 [GeForce RTX 3070]
+	\item[SO] Linux Mint 21.3 Cinnamon
+\end{description}
+
+En el capítulo \ref{cap:computacion} explicaremos cómo ejecutar programas en \ac{GPU} usando la librería pycuda (para lo que primero debemos de entender como programar en CUDA), seguido de un par de programas para familiarizarnos con las librerías y ver que, en efecto, pueden acelerar los tiempos de ejecución.
+
+\todo{Completar con qué más hago en el TFG}
