@@ -7,16 +7,19 @@
 \newblock Reading, Massachusetts [etc] : Addison-Wesley, 1984.
 \newblock ISBN 0201135221.
 
-\bibitem[{Fourier(1822)}]{fourier}
-{\sc Fourier, J. B.~J.}
-\newblock {\em Théorie Analytique de la Chaleur\/}.
-\newblock Cambridge University Press, 1822.
-\newblock ISBN 9780511693229.
-
 \bibitem[{Isaacson y Keller(1966)}]{anummeth}
 {\sc Isaacson, E.} y {\sc Keller, H.~B.}
 \newblock {\em Analysis of Numerical Methods\/}.
 \newblock John Wiley and Sons, 1966.
 \newblock ISBN 9780471428657.
+
+\bibitem[{Weisstein(2024)}]{1dwavedem}
+{\sc Weisstein, E.}
+\newblock d´{A}lembert's {S}olution. -- {M}ath{W}orld. {A} {W}olfram {W}eb
+  {R}esource.
+\newblock 2024.
+\newblock Disponible online en:
+  \url{https://mathworld.wolfram.com/dAlembertsSolution.html}, Último acceso:
+  28/08/2024.
 
 \end{thebibliography}

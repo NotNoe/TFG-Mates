@@ -1,0 +1,12 @@
+\chapter{Ecuación de Laplace}
+\label{cap:laplace}
+
+\begin{resumen}
+	En este capítulo desarrollaremos un método numérico, basado en las diferencias finitas, para aproximar la solución a la ecuación de Laplace en dos dimensiones.
+\end{resumen}
+
+La ecuación de Laplace en dos dimensiones es de la forma
+\begin{equation} \label{eq:laplace_eq}
+	\frac{\partial^2u}{\partial x^2} + \frac{\partial^2u}{\partial y^2} = 0
+\end{equation}
+En nuestro caso, para simplificar, supondremos que el dominio es un rectángulo de la forma $D:=\{(x,y)|0<=x<=a, 0<=y<=b\}$. Por tanto, es claro que la frontera es $C:=\{(x,y)|x=0,a, 0<=y<=b;y=0,b, 0<=x<=a\}$.

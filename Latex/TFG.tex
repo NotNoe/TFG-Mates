@@ -77,17 +77,21 @@ constantes,guionado,Cascaras/bibliografia,config%
 % Paquete de la plantilla
 \usepackage{TeXiS/TeXiS}
 
-\usepackage{amsmath}
+%\usepackage{amsmath}
 \usepackage{mathtools}
 \usepackage{amsthm}
+\usepackage{mathrsfs}
+\usepackage{amsfonts}
 \newtheorem{teorema}{Teorema}[section]
 \newtheorem{lema}{Lema}[section]
 \newtheorem{definicion}{Definicion}[section]
 
 
+\usepackage{graphicx}
+\usepackage[step]{animate}
 
-
-
+\usepackage{enumitem}
+\usepackage{url}
 \usepackage{listings}
 \usepackage{xcolor}
 \definecolor{codegreen}{rgb}{0,0.6,0}
@@ -178,8 +182,10 @@ constantes,guionado,Cascaras/bibliografia,config%
 \include{Capitulos/1-Introduccion}
 \include{Capitulos/2-ComputacionEnGPU}
 \include{Capitulos/3-MDF}
-%\include{Capitulos/Capitulo4}
-%\include{Capitulos/Capitulo5}
+\include{Capitulos/4-Wave_Eq}
+\include{Capitulos/5-Laplace_Eq}
+\include{Capitulos/6-Algoritmos_Clasicos}
+\include{Capitulos/7-Algoritmos_GPU}
 %\include{Capitulos/ConclusionesTrabajoFuturo}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -1,25 +1,25 @@
 ------------------N = 1------------------
         Los resultados coinciden:
-        Tiempo en GPU 0.00034869599949161056
-        Tiempo en CPU: 6.595699960598722e-05
-        La GPU es un 18.9% mas rapida
+        Tiempo en GPU 0.00044668700047623133
+        Tiempo en CPU: 4.9682000280881766e-05
+        La GPU es un 11.1% mas rapida
 ------------------N = 100------------------
         Los resultados coinciden:
-        Tiempo en GPU 0.00011117699978058226
-        Tiempo en CPU: 2.217499968537595e-05
-        La GPU es un 19.9% mas rapida
+        Tiempo en GPU 0.00012892499944427982
+        Tiempo en CPU: 2.4683999981789384e-05
+        La GPU es un 19.1% mas rapida
 ------------------N = 10000------------------
         Los resultados coinciden:
-        Tiempo en GPU 0.00012266700105101336
-        Tiempo en CPU: 0.00028031600049871486
-        La GPU es un 228.5% mas rapida
+        Tiempo en GPU 0.00013271799980429932
+        Tiempo en CPU: 0.00031606100037606666
+        La GPU es un 238.1% mas rapida
 ------------------N = 1000000------------------
         Los resultados coinciden:
-        Tiempo en GPU 0.0037263039994286373
-        Tiempo en CPU: 0.03368916900035401
-        La GPU es un 904.1% mas rapida
+        Tiempo en GPU 0.0033975989999817102
+        Tiempo en CPU: 0.031145410999670275
+        La GPU es un 916.7% mas rapida
 ------------------N = 100000000------------------
         Los resultados coinciden:
-        Tiempo en GPU 0.2606051149996347
-        Tiempo en CPU: 3.1032862800002476
-        La GPU es un 1190.8% mas rapida
+        Tiempo en GPU 0.26329770699976507
+        Tiempo en CPU: 2.8926681190005183
+        La GPU es un 1098.6% mas rapida
