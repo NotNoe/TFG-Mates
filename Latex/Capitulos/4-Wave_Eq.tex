@@ -97,9 +97,9 @@ Esto indica que, para calcular $u_{i,j}$ para cualquier tiempo $j\in\mathbb{N}$ 
 
 Calcular los valores para $t=\Delta t$ tampoco es difícil, pues $u(x,\Delta t) \equiv u(x,0) + \Delta t u_t(x,0) \equiv f(x) +\Delta tg(x)$.
 
-Si definimos $\lambda = c\frac{\Delta t}{\Delta x}$, la convergencia del esquema numérico depende exclusivamente de su valor. Si $\lambda > 1$, el método diverge \footnote{Esto no lo probaremos, pero puede encontrarse una demostración en \citet{anummeth}, p. 487.}. Por otro lado, si $\lambda <=1$, el esquema converge.
+Si definimos $\lambda = c\frac{\Delta t}{\Delta x}$, la convergencia del esquema numérico depende exclusivamente de su valor. Si $\lambda > 1$, el método diverge \footnote{Esto no lo probaremos, pero puede encontrarse una demostración en \cite{anummeth}, p. 487.}. Por otro lado, si $\lambda <=1$, el esquema converge.
 
-Lo probaremos solo para $\lambda=1$ (que es el caso que usaremos), pero puede encontrarse en \citet{anummeth} una demostración para $0<\lambda<=1$.
+Lo probaremos solo para $\lambda=1$ (que es el caso que usaremos), pero puede encontrarse en \cite{anummeth} una demostración para $0<\lambda<=1$.
 
 \begin{teorema}
 	Si $\lambda=1$ y $f,g\in\mathscr{C}^2(\mathbb{R})$, la aproximación dada por \ref{eq:1dwave_formula} converge a la solución de \ref{eq:1dwaveeq} cuando $\Delta x = c\Delta t \longrightarrow 0$.
@@ -153,15 +153,10 @@ Lo probaremos solo para $\lambda=1$ (que es el caso que usaremos), pero puede en
 	Que, pasando al límite se nos queda en
 	\begin{equation*}
 	\begin{split}
-		u_{i,j} = f(x_i-ct_{j+1}) + \frac{1}{2c}\lim_{\Delta x\rightarrow0}\sum_{k=0}^{j}2\Delta xg(x_i+ct_{j+1}-[2k+1]\Delta x) + \\ \frac{1}{2}\lim_{\Delta x\rightarrow0}\sum_{k=0}^{j}2\Delta xf'(x_i+ct_{j+1} +\theta_k\Delta x - [2k+1]\Delta x) =^{*} \\
+		u_{i,j} = f(x_i-ct_{j+1}) + \frac{1}{2c}\lim_{\Delta x\rightarrow0}\sum_{k=0}^{j}2\Delta xg(x_i+ct_{j+1}-[2k+1]\Delta x) + \\ \frac{1}{2}\lim_{\Delta x\rightarrow0}\sum_{k=0}^{j}2\Delta xf'(x_i+ct_{j+1} +\theta_k\Delta x - [2k+1]\Delta x) = \\
 		f(x-ct) + \frac{1}{2c}\int_{0}^{2ct}g(x+ct-\xi)d\xi + \frac{1}{2}\int_{0}^{2ct}f'(x+ct-\xi)d\xi
 	\end{split}
 	\end{equation*}
-	\com{La igualdad que tiene un asterisco la he copiado del libro y no la entiendo. Entiendo conceptualmente que al pasar al límite de un sumatorio estamos haciendo una integral y que el diferencial es "lo que se hace pequeño en el límite", pero no sé el formalismo matemático que se ha aplicado.
-		
-	Además hay otro problema, aun suponiendo eso que no entiendo, las integrales me dan \textit{casi} los resultados que necesito. Como no sé de dónde ha salido la última igualdad, no puedo comprobar si hay alguna pequeña errata.
-
-	En cualquier caso supondré que he terminado la demostración}
 	
 	Pero el final de la última serie de igualdades es exactamente \ref{eq:1dwavesol}, luego hemos demostrado que la aproximación tiende a la solución exacta de la ecuación.
 \end{proof}

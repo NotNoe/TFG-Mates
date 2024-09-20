@@ -42,28 +42,63 @@ Ondas (2D):
 Primero de todo necesitaremos hacer un estudio matemático sobre las ecuaciones diferenciales que trataremos. Todos los algoritmos que vamos a hacer están basados en el método de las diferencias finitas, que consiste en hacer una aproximación de las derivadas por un cociente incremental en puntos cercanos. Para hacer esto, necesitaremos definir sobre todos los problemas una malla discreta de puntos, y serán en estos donde hallemos soluciones aproximadas de las soluciones.
 
 \subsection{Notación}\label{sec:notacion}
-Las mallas son una discretización del dominio de las funciones, que en caso de las lineales será bidimensional y en el caso de las planas será tridimensional (ya que siempre hay que añadir el tiempo como dimensión). En todos los casos llamaremos $\Delta t$, $\Delta x$ y $\Delta y$ al espacio entre puntos de la malla en cada dimensión.
+Cuando definamos y trabajemos sobre algoritmos numéricos para aproximar las soluciones de los problemas necesitaremos discretizar el dominio, pues necesitamos trabajar con una cantidad de puntos finita para que un ordenador pueda implementar el algoritmo.
 
-Los diferentes algoritmos que implementaremos tomarán como entrada las condiciones iniciales del problema de valor inicial, así como cualquier parámetro que requiera la ecuación. Además también tomarán el intervalo sobre el que trabajaremos (la forma de este variará en cada problema) y el número de puntos que queremos en cada dimensión de la malla.
+Por tanto, el dominio de todos nuestros problemas va a ser un rectángulo en dos o tres dimensiones. Sobre este rectángulo, crearemos una malla a partir de unos parámetros que formarán parte de la entrada de los algoritmos, que será el subconjunto finito del dominio donde trabajaremos.
 
-Además, siguiendo con el convenio establecido por \citet{anummeth}, denotaremos los cocientes incrementales (omitiendo $x$, $y$ y $t$ cuando no haya lugar a confusión)
-\[
-\begin{cases}
-	u_x \equiv \frac{u(x+\Delta x,y,t)-u(x,y,t)}{\Delta x} \\
-	u_{\overline{x}} \equiv \frac{u(x,y,t)-u(x-\Delta x,y,t)}{\Delta x} \\
-	u_{\hat{x}} \equiv \frac{1}{2}[u_x(x,y,t)-u_{\overline{x}}(x,y,t)]
-\end{cases}
-\]
+Esta notación es consistente entre los distintos casos, pero las definiciones serán ligeramente distintas dependiendo de las dimensiones del problema.
 
-Un caso de esto que utilizaremos varias veces a lo largo de este documento es
-\begin{equation*}
-	u_{x\bar{x}} = u_{\bar{x}x} = \frac{1}{\Delta x^2}[u(x+\Delta x,y,t) - 2u(x,y,t) + u(x-\Delta x,y,t)]
-\end{equation*}
+\subsubsection{Tipo I: Una variable temporal y otra espacial}
+Este es el caso de las ecuaciones de calor y onda lineales. El dominio será $R=\{(x,t) \hspace{5px}|\hspace{5px} a\leq x\leq b,\hspace{5} 0\leq t\leq t_{max}\}$ y solución real del problema la denotaremos por $u(x,t):[a,b] \times \mathbb{R}^+ \longrightarrow \mathbb{R}$.
 
-también denotamos los puntos de la malla como $x_i=x_0+i\Delta x$, $y_j=y_0+j\Delta y$ y $t_k=t_0+k\Delta t$, y el valor de la función en estos puntos como 
-$
-u(x_i,t_k) \equiv u_{i,j}$ y $ u(x_i,y_j,t_k) \equiv u^k_{i,j}$
+Los parámetros que necesitaremos para construir la malla (que los pediremos como entrada del algoritmo) serán los valores que delimitan el rectángulo ($a$, $b$ y $t_{max}$), y el número de puntos que habrá en la malla en ambas dimensiones ($n_x$, $n_t$). A partir de estos datos podemos definir $\Delta x:= \frac{b-a}{n_x-1}$ y $\Delta t:= \frac{t_{max}}{n_t-1}$ y los conjuntos $R_x:=\{a+i\Delta x|0<=i<n_x\}\subset[a,b]$ y $R_{t}:=\{j\Delta x|0<=j<n_t\}\subset[0,t_{max}]$. En base a esas definiciones, el conjunto de puntos sobre el que trabajaremos será $R_x\times R_t$.
 
+Salta a la vista que todos los puntos de la malla serán de la forma $(a+i\Delta x,j\Delta t)$, por lo que para simplificar la notación, definiremos\footnote{Nótese que, aunque $(x_i,t_j)\in R \Leftrightarrow 0\leq i< nx·$ y $0\leq j<n_t$, la definición es coherente para cualesquiera $i$ y $j$, y aunque $(x_i,t_j)\notin R$, podemos seguir evaluando la solución (o su aproximación) en estos puntos siempre y cuando podamos asegurar la existencia y unicidad de la solución en un conjunto $R'$ tal que $(x_i,t_j)\cup R\subset R'$.} $x_i:=a+i\Delta x$ y $t_j:=j\Delta t$. Con esta notación se cumplen las relaciones $t_0=0$, $t_{n_t-1}=t_{max}$, $x_0=a$ y $x_{n_x-1}=b$.
+
+Para seguir simplificando la notación, cuando queramos evaluar cualquier función $f$ en los puntos de la malla, podremos escribirlo de la forma $f_{i,j}:=f(x_i,t_j)=f(a+i\Delta x,j\Delta t)$.
+
+La función que calcularemos y utilizaremos para aproximar $u$ será $U(x,t):R_x\times R_t\longrightarrow \mathbb{R}$.
+
+Y por último, como queremos aplicar métodos basados en las diferencias finitas, necesitaremos aproximar las distintas derivadas de la función por un cociente incremental. Para simplificar eso, utilizaremos la siguiente notación:
+
+\begin{equation}
+	\label{eq:not_ford}
+	U^{x}(x,t) := \frac{U(x+\Delta x,t)-U(x,t)}{\Delta x}
+\end{equation}
+\begin{equation}
+	\label{eq:not_back}
+	U^{\bar{x}}(x,t) := \frac{U(x,t)-U(x-\Delta x,t)}{\Delta x}
+\end{equation}
+\begin{equation}
+	\label{eq:not_center}
+	U^{\hat{x}}(x,t):= \frac{1}{2}[U^{x}(x,t)+U^{\bar{x}}(x,t)]
+\end{equation}
+A estas funciones también podemos el convenio descrito arriba, y escribirlas sustituir $x$ y $t$ por los subíndices pertinentes, teniendo en cuenta que si $x = x_i$, $x \pm \Delta x = x_{i\pm1}$ (y de manera análoga, con la variable t).
+
+Cabe destacar un caso de especial interés que usaremos más adelante, y es aplicar (en cualquier orden) a la función $U$ (\ref{eq:not_ford}) y (\ref{eq:not_back}), con lo que obtenemos la siguiente:
+
+
+\begin{equation}
+	\label{eq:not_second}
+	U^{x\bar{x}}_{i,j} = U^{\bar{x}x}_{i,j} := \frac{1}{\Delta x^2}[U_{x+1,j} - 2U_{i,j}+U_{i-1,j}]
+\end{equation}
+
+Como es natural, las cuatro funciones descritas arriba pueden definirse de manera completamente análoga sobre la variable $t$ en lugar de $x$.
+
+\subsubsection{Tipo II: Una variable temporal y dos espaciales}
+Este es el caso de las ecuaciones del calor y ondas y, de manera muy parecida al apartado anterior, definiremos el dominio como $R=\{(x,y,t) \hspace{5px}|\hspace{5px} a\leq x\leq b, c\leq y\leq d, 0\leq t\leq t_{max}\}$.
+
+Los parámetros para construir la malla serán los mismos que en el apartado anterior, añadiéndoles los límites de la nueva dimensión ($c$,$d$) y el número de puntos que queremos en esta dimensión ($n_y$).
+
+Las definiciones del apartado anterior de los incrementos de x y t siguen siendo válidas, pero tenemos que añadir la definición de $\Delta y:=\frac{d-c}{n_y-1}$ y el conjunto $R_y:=\{c+i\Delta x|0<=k<n_y\}\subset[c,d]$. Con todas las definiciones que hemos hecho, el subconjunto finito sobre el que estamos trabajando (la malla) es $R_x\times R_y\times R_t$.
+
+La solución exacta será denotada por $u(x,t):[a,b] \times\mathbb{R}^+ \longrightarrow\mathbb{R}$, y la función utilizada para aproximarla será $U(x,y,t):R_x\times R_y\times R_t\longrightarrow \mathbb{R}$.
+
+Como en el apartado anterior, al evaluar una función en un punto de la malla utilizaremos subíndices (en este caso $i$, $k$ y $j$) para identificar al punto. Por último se modifican ligeramente las ecuaciones (\ref{eq:not_ford}), (\ref{eq:not_back}), (\ref{eq:not_center}) y (\ref{eq:not_second}) para que tengan sentido en tres dimensiones.
+
+\subsubsection{Tipo III: Dos variables espaciales}
+Este caso solo se corresponde con la ecuación de Laplace en el plano,y utilizaremos una notación muy parecida al la que se emplea en el Tipo I, pero limitando ambas variables por intervalos $[a,b]$ y $[c,d]$ como hicimos en el Tipo II.
+\com{Las definiciones necesarias para el Tipo III son prácticamente iguales que las de los tipos anteriores y por eso he decidido no extenderme más en esto. No obstante, si lo ves necesario puedo hacer una construcción totalmente completa (como en el tipo I) o desarrollar un poco más (como en el Tipo II).}
 
 \section{Plan de trabajo}
 Para realizar el estudio, los lenguajes de programación que utilizaremos serán CUDA (una extensión de C++ que permite la ejecución de funciones -llamadas \emph{kernels}- en la \ac{GPU}) y Python, que tiene una librería llamada pycuda para ejecutar código \ac{CUDA}. Además, todos los programas aquí mostrados y los resultados obtenidos serán ejecutados en la misma máquina, con las siguientes especificaciones, no obstante, los programas están pensados para poder ejecutarse en cualquier máquina\footnote{Si se desea utilizar el script \textit{generateMod.py} en un sistema basado en Windows o MAC, podría ser necesario hacer unos pocos cambios para adaptarse a las distintas formas de nombrar las rutas en estos sistemas.}
