@@ -77,7 +77,7 @@ constantes,guionado,Cascaras/bibliografia,config%
 % Paquete de la plantilla
 \usepackage{TeXiS/TeXiS}
 
-%\usepackage{amsmath}
+\usepackage{amsmath}
 \usepackage{mathtools}
 \usepackage{amsthm}
 \usepackage{mathrsfs}
@@ -86,11 +86,16 @@ constantes,guionado,Cascaras/bibliografia,config%
 \newtheorem{lema}{Lema}[section]
 \newtheorem{definicion}{Definicion}[section]
 
+
 \interfootnotelinepenalty=10000
 
 
 \usepackage{graphicx}
 \usepackage[step]{animate}
+\usepackage{hyperref}
+\mathtoolsset{showonlyrefs}
+
+
 
 \usepackage{enumitem}
 \usepackage{url}
@@ -183,7 +188,7 @@ constantes,guionado,Cascaras/bibliografia,config%
 
 \include{Capitulos/1-Introduccion}
 \include{Capitulos/2-ComputacionEnGPU}
-\include{Capitulos/3-MDF}
+\include{Capitulos/3-Heat_Eq}
 \include{Capitulos/4-Wave_Eq}
 \include{Capitulos/5-Laplace_Eq}
 \include{Capitulos/6-Algoritmos_Clasicos}

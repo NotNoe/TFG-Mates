@@ -1,11 +1,11 @@
-\chapter{Algoritmos en GPU}\label{chap:alg_gpu}
+\chapter{Algoritmos en GPU}\label{cap:alg_gpu}
 \begin{resumen}
 	En este capítulo implementaremos los mismos métodos numéricos que en el capítulo \ref{chap:alg_clas}, pero utilizando la GPU para la parte con un coste computacional elevado.
 \end{resumen}
 \section{Introducción}
 La idea para aprovechar el paralelismo que nos ofrece la GPU es que cada hilo se encargue de calcular (de manera paralela) el valor de una casilla de la matriz distinta, pero no podemos simplemente hacer un hilo por cada casilla y ponerlos a calcular, primero necesitamos entender un poco el concepto de sincronización.
 
-Cuando se trabaja con programación paralela, la sincronización es lo más importante a tener en cuenta. Pongamos que estamos calculando valores en una matriz donde cada casilla de una fila depende exclusivamente de los valores de las casillas de filas menores (como pasa en las fórmulas \ref{eq:1dheat_formula} y \ref{eq:1dwave_formula}). En ese caso, podemos calcular todas las casillas de la misma fila al mismo tiempo (pues sus valores son independientes entre si), pero tendremos que esperar a que los valores necesarios de las filas anteriores estén calculados.
+Cuando se trabaja con programación paralela, la sincronización es lo más importante a tener en cuenta. Pongamos que estamos calculando valores en una matriz donde cada casilla de una fila depende exclusivamente de los valores de las casillas de filas menores (como pasa en las fórmulas \eqref{eq:1dheat_formula} y \eqref{eq:1dwave_formula}). En ese caso, podemos calcular todas las casillas de la misma fila al mismo tiempo (pues sus valores son independientes entre si), pero tendremos que esperar a que los valores necesarios de las filas anteriores estén calculados.
 
 La idea es que, a parte de todo lo que 
 

@@ -9,7 +9,7 @@
 \section{Bases de la programación en \ac{GPU}}
 Las \ac{GPU}s son componentes hardware del ordenador pensados para acelerar el procesamiento de los gráficos. Esto se hace aprovechando que la mayoría de los cómputos que se requieren para procesar estos se puede ejecutar de manera simultánea en paralelo.
 
-Dada la naturaleza de las tarjetas gráficas, resulta natural el utilizarlas para implementar algoritmos que puedan beneficiarse de este paralelismo. Con ese fin, NVIDIA desarrolló el lenguage de programación \ac{CUDA}\footnote{Puede consultarse el manual completo de \ac{CUDA} en este \href{https://docs.nvidia.com/cuda/pdf/CUDA_C_Programming_Guide.pdf}{\emph{enlace}}}, una extensión de C/C++ que permite la definición de \emph{kernels}. 
+Dada la naturaleza de las tarjetas gráficas, resulta común utilizarlas para implementar algoritmos que puedan beneficiarse de este paralelismo. Con ese fin, NVIDIA desarrolló el lenguage de programación \ac{CUDA}\footnote{Para ver el manual completo de CUDA, consultar el siguiente enlace: \url{https://docs.nvidia.com/cuda/pdf/CUDA_C_Programming_Guide.pdf}}, una extensión de C/C++ que permite la definición de \emph{kernels}. 
 
 Los \emph{kernels} son funciones de C/C++ diseñadas para ejecutarse en varios hilos al mismo tiempo en la \ac{GPU} (a la que llamaremos \emph{dispositivo} en este contexto). Estos kernels serán luego ejecutados desde la \ac{CPU}, que en este contexto llamaremos \emph{host}.
 
@@ -89,13 +89,13 @@ Habiendo tenido ya nuestro primer contacto con pycuda, vamos ahora a poner de ma
 
 $\bullet$ En \ref{code:vectorAddPY} podemos ver un ejemplo más complejo de código Python usando pycuda. La función \textit{add\_random\_vects} genera dos vectores de números aleatorios y los suma, primero en la CPU, y luego en GPU, midiendo el tiempo de ambos. Hay que destacar un par de cosas importantes:
 
-Por un lado, hay que hacer la gestión de memoria, osea reservar memoria en GPU y copiar los datos con las funciones de pycuda. Por otro lado hay que gestionar el tamaño de bloque. Recordemos que los bloques pueden tener a lo sumo 1024 hilos, mientras que las grids pueden ser arbitrariamente grandes\footnote{En realidad hay un límite de tamaño dependiente del hardware, pero es tan grande que puede desestimarse}, esto implica que podríamos simplemente ejecutar un hilo por bloque y tantas mallas como el tamaño del vector, pero si recordamos la imagen \ref{fig:mem} podemos observar que los hilos de cada bloque comparten memoria local, por lo que si hacemos el máximo uso posible de los bloques (osea tratar con bloques de 1024 hilos), haremos un menor uso de la memoria y, por tanto, obtendremos resultados notablemente mejores.
+Por un lado, hay que hacer la gestión de memoria, osea reservar memoria en GPU y copiar los datos con las funciones de pycuda. Por otro lado hay que gestionar el tamaño de bloque. Recordemos que los bloques pueden tener a lo sumo 1024 hilos, mientras que las grids pueden ser arbitrariamente grandes\footnote{En realidad hay un límite de tamaño dependiente del hardware, pero es tan grande que puede desestimarse.}, esto implica que podríamos simplemente ejecutar un hilo por bloque y tantas mallas como el tamaño del vector, pero si recordamos la imagen \ref{fig:mem} podemos observar que los hilos de cada bloque comparten memoria local, por lo que si hacemos el máximo uso posible de los bloques (osea tratar con bloques de 1024 hilos), haremos un menor uso de la memoria y, por tanto, obtendremos resultados notablemente mejores.
 
 Por último, comprobamos que las sumas coincidan y mostramos el incremento de eficiencia. Al ejecutar este script, simplemente llamamos a la función para valores de n entre $1$ y $10^{10}$
 
 $\bullet$ En \ref{code:vectorAddCU} el código es bastante inmediato, calculamos el índice al que le corresponde nuestro hilo concreto y hacemos la suma. Solo hay una sutileza, y es que, en el último bloque que utilicemos, probablemente algunos hilos estén trabajando posiciones no válidas (porque todos los bloques tienen la misma cantidad de hilos, luego hay más hilos que posiciones en el vector). Para no acceder a posiciones de memoria posiblemente inválidas, simplemente añadimos a los datos de entrada el tamaño del vector y, si el hilo tiene un índice superior al tamaño del vector, no hacemos nada.
 
-$\bullet$ En \ref{code:vectorAddOUT} se pone de manifiesto la mejora en la eficiencia, y es que cuando el tamaño del vector es suficientemente grande, el algoritmo es unas 10 veces más rápido. 
+$\bullet$ En \ref{code:vectorAddOUT} se pone de manifiesto la mejora en la eficiencia de los algoritmos paralelos, que pueden ser hasta 10 veces más rápidos que los convencionales para datos de entrada suficientemente grandes.
 
 
 

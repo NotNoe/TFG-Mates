@@ -1,13 +1,13 @@
-\chapter{Algoritmos Clásicos}\label{chap:alg_clas}
+\chapter{Algoritmos Clásicos}\label{cap:alg_clas}
 \begin{resumen}
 	En este capítulo implementaremos todos los métodos numéricos desarrollados en las secciones anteriores en python, con métodos de computación clásica, para más adelante poder comparalos con sus equivalentes en programación en GPU.
 \end{resumen}
 
 \section{Ecuación del calor lineal}
 Recordamos que la fórmula a implementar es 
-\begin{equation*}
+\begin{equation}
 	u_{i,j+1}=(1-2\lambda)u_{i,j} + \lambda(u_{i+1,j}+u_{i-1,j})
-\end{equation*}
+\end{equation}
 y las condiciones iniciales que tenemos son de contorno, osea que sabemos el valor exacto de la solución en los extremos, por lo que para si queremos saber el estado el intervalo $[a,b]$ en el tiempo $t_0$, habrá que calcular una serie de puntos intermedios que podemos observar en la figura \ref{fig:1dheatpoints}.
 
 \begin{figure}
@@ -33,9 +33,9 @@ Luego rellena la matriz de resultados, comenzando por los valores iniciales (uti
 
 \section{Ecuación de onda lineal}
 En este caso, la fórmula a implementar es
-\begin{equation*}
+\begin{equation}
 	u_{i,j+1} =  2\left[1 - \left(c\frac{\Delta t}{\Delta x}\right)^2\right]u_{i,j} + \left(c\frac{\Delta t}{\Delta x}\right)^2[u_{i+1,j} + u_{i-1,j}] - u_{i,j-1}
-\end{equation*}
+\end{equation}
 y tenemos unas condiciones iniciales que nos dan el valor de la función en los dos primeros instantes de tiempo para cualquier $x$. Esto hará que para calcular los valores de la solución en el intervalo  $[a,b]$ en $t_0$ necesitaremos conocer bastantes más puntos intermedios que en otros casos, como podemos observar en la figura \ref{fig:1dwavepoints}.
 
 \begin{figure}
