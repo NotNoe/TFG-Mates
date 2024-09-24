@@ -113,10 +113,11 @@ Ahora estamos en condiciones de calcular todos los valores de $U_{i,j}$. Supondr
 
 Salta a la vista que, a diferencia de el caso de la ecuación del calor, vamos a necesitar calcular $U_{i,j}$ para puntos que estén fuera del intervalo objetivo, pero esto no es ningún problema, porque ya comentamos que $U_{i,j}$ está definido para cualquier $i\in\mathbb{R}$.
 
-La convergencia del esquema numérico depende exclusivamente del valor de $\lambda$. Si $\lambda > 1$, el método diverge \footnote{Esto no lo probaremos, pero puede encontrarse una demostración en \cite[ p. 487.]{anummeth}}. Por otro lado, si $\lambda <=1$, el esquema converge.
+La convergencia del esquema numérico depende exclusivamente del valor de $\lambda$. Si $\lambda > 1$, el método diverge 
+\footnote{Esto no lo probaremos, pero puede encontrarse una demostración en \cite[ p. 487.]{anummeth}}. Por otro lado, si $\lambda <=1$, el esquema converge.
 
 \begin{teorema}
-	Si $\lambda=1$ y $f,g\in\mathscr{C}^2(\mathbb{R})$, la aproximación dada por \eqref{eq:1dwave_formula} converge a la solución de \eqref{eq:1dwave} cuando $\Delta x = c\Delta t \longrightarrow 0$.
+	Si $\lambda=1$ y $f,g$ son dos funciones continuas con derivada continua, la aproximación dada por \eqref{eq:1dwave_formula} converge a la solución de \eqref{eq:1dwave} cuando $\Delta x = c\Delta t \longrightarrow 0$.
 \end{teorema}
 \begin{proof}
 	Primero definimos el siguiente valor.
@@ -157,25 +158,51 @@ La convergencia del esquema numérico depende exclusivamente del valor de $\lamb
 	\begin{equation}
 		f_{i+j-2k}-f_{i+j-2k-1} = f(x_{i-2k}+ct_j) - f(x_{i-2k}+ct_{j}-\Delta x) = \Delta xf'(x_{i-2k}+ct_j+\theta_k\Delta x).
 	\end{equation} 
-	Además, $f_{i-j-1}=f(x_{i-j-1})=f(x_i-(j+1)\Delta x)=f(x_i -(j+1)c\Delta t)=f(x_i-ct_{j+1})$. Haciendo algo muy similar, obtenemos las igualdades $g_{i+j-2k}=g(x_i+ct_{j+1}-[2k+1]\Delta x)$ y $f'(x_{i-2k}+ct_j+\theta_k\Delta x)=f'(x_i+ct_{j+1}+\theta_k\Delta x - [2k+1]\Delta x)$
+
+	Además, $f_{i-j-1}=f(x_{i-j-1})=f(x_i-(j+1)\Delta x)=f(x_i -(j+1)c\Delta t)=f(x_i-ct_{j+1})$. Haciendo algo muy similar, obtenemos las igualdades $g_{i+j-2k}=g(x_i+ct_{j+1}-[2k+1]\Delta x)$ y $f'(x_{i-2k}+ct_j+\theta_k\Delta x)=f'(x_i+ct_{j+1}+\theta_k\Delta x - [2k+1]\Delta x)$.
 	
-	Sean x,t fijos hagamos tender $\delta x=c\Delta t$ a 0, y $i,j$ tender a infinito de manera que se mantengan las relaciones $x_i=x$ y $t_j+1=t$ siempre.
-	Si sustituimos en \ref{aux2} con todas las igualdades que hemos obtenido, tendremos
+	Sean $x$,$t$ puntos de la malla, hagamos tender $\Delta x=c\Delta t$ a 0. Como son puntos de la malla, tienen que existir $i$ y $j$ (dependientes de $\Delta x$ y $\Delta t$ y que tienden a infinito cuando estos tienden a cero) tales que $x=x_i$ y $t=t_j$.
+	Si sustituimos en \eqref{aux2} con todas las igualdades que hemos obtenido, tendremos
+	\begin{multline}
+		U_{i,j+1} = f(x_i-ct_{j+1}) + \frac{1}{2c}\sum_{k=0}^{j}2\Delta xg(x_i+ct_{j+1}-[2k+1]\Delta x) + \\ \frac{1}{2}\sum_{k=0}^{j}2\Delta xf'(x_i+ct_{j+1} +\theta_k\Delta x - [2k+1]\Delta x).
+	\end{multline}
+	
+	Observemos con detenimiento el primer sumatorio, cada sumando es la función $g(x_i+ct_j - \xi)$ multiplicada por $2\Delta x$ y evaluada en el punto $\xi_k\in \{\Delta x, 3\Delta x,\dots, (2j+1)\Delta x\}$, cada uno de estos puntos pertenece al intervalo $[(2k)\Delta x, (ki+2)\Delta x]$, que tiene tamaño $2\Delta x$. Salta a la vista que hemos creado una partición del intervalo $[0,(2j+2)\Delta x] = [0,2ct_{j+1}]$. Utilizando la definición de integral, se tiene que el primer sumatorio es la integral
 	\begin{equation}
-	\begin{split}
-		u_{i,j} = f(x_i-ct_{j+1}) + \frac{1}{2c}\sum_{k=0}^{j}2\Delta xg(x_i+ct_{j+1}-[2k+1]\Delta x) + \\ \frac{1}{2}\sum_{k=0}^{j}2\Delta xf'(x_i+ct_{j+1} +\theta_k\Delta x - [2k+1]\Delta x)
-	\end{split}
+		\frac{1}{2c}\sum_{k=0}^{j}2\Delta xg(x_i+ct_{j+1}-[2k+1]\Delta x) = \frac{1}{2c}\int_{0}^{2ct_{j+1}}g(x_i+ct_{j+1}-\xi)d\xi,
 	\end{equation}
+	y, de manera completamente análoga, llegamos a que el segundo sumando también se puede expresar como la siguiente integral
+	\begin{equation}
+		\frac{1}{2}\sum_{k=0}^{j}2\Delta xf'(x_i+ct_{j+1} +\theta_k\Delta x - [2k+1]\Delta x) = \frac{1}{2}\int_{0}^{2ct_{j+1}} f'(x_i+ct_{j+1}-\xi)d\xi.
+	\end{equation}
+	
+	Teniendo en cuenta las igualdades que acabamos de ver (y  que $x=x_i$ y $t=t_j+1$), podemos ver que al pasar al límite, la fórmula se nos queda como
+	\begin{equation}
+		U(x,t) = f(x-ct) + \frac{1}{2c}\int_{0}^{2ct}g(x+ct-\xi)d\xi + \frac{1}{2}\int_{0}^{2ct} f'(x+ct-\xi)d\xi.
+	\end{equation}
+
+	Si realizamos el cambio de variable $\nu = x +ct - \xi$ sobre la primera integral, se nos queda en
+	\begin{equation}
+		\int_{x-ct}^{x+ct}g(\mu)d\mu.
+	\end{equation}
+	Además es fácil comprobar que la función $-f(x+ct-\xi)$ es una primitiva de $f'(x+ct-\xi)$ (si la consideramos una función en la variable $\xi$), por lo que, aplicando el segundo teorema fundamental del cálculo, tenemos que la segunda integral vale
+	\begin{equation}
+		\frac{1}{2}[-f(x+ct-2ct)+f(x+ct)] = \frac{1}{2}[f(x+ct)-f(x-ct)].
+	\end{equation}
+	
+	Por último, si sustituimos las integrales originales por la integral y el valor que acabamos de calcular, concluimos que
+	\begin{equation}
+		U(x,t) = \frac{1}{2}[f(x+ct) - f(x-ct)] + \int_{x-ct}^{x+ct}g(\mu)d\mu,
+	\end{equation}
+	que, como calculamos en la Sección anterior, es la solución exacta del problema. Hemos probado que $\forall j\geq1$ la aproximación converge a la solución cuando hacemos más pequeñas las mallas, y sabemos que la aproximación es exacta en los valores $U_{i,0}$, por lo que hemos concluido la demostración.
 	Que, pasando al límite se nos queda en
-	\begin{equation}
-	\begin{split}
-		u_{i,j} = f(x_i-ct_{j+1}) + \frac{1}{2c}\lim_{\Delta x\rightarrow0}\sum_{k=0}^{j}2\Delta xg(x_i+ct_{j+1}-[2k+1]\Delta x) + \\ \frac{1}{2}\lim_{\Delta x\rightarrow0}\sum_{k=0}^{j}2\Delta xf'(x_i+ct_{j+1} +\theta_k\Delta x - [2k+1]\Delta x) = \\
-		f(x-ct) + \frac{1}{2c}\int_{0}^{2ct}g(x+ct-\xi)d\xi + \frac{1}{2}\int_{0}^{2ct}f'(x+ct-\xi)d\xi
-	\end{split}
-	\end{equation}
-	
-	Pero el final de la última serie de igualdades es exactamente \eqref{eq:1dwavesol}, luego hemos demostrado que la aproximación tiende a la solución exacta de la ecuación.
 \end{proof}
+
+	Este teorema demuestra que si $\lambda=1$ el método converge a la solución, pero como veremos es realmente útil poder utilizar $\lambda<1$ de cara a hacer algoritmos que se aprovechen del paralelismo en la CPU, por lo que enunciaremos el siguiente resultado, cuya demostración puede encontrarse en \cite{anummeth}.
+	
+	\begin{teorema}
+		Si $\lambda\leq1$ y $f,g$ son dos funciones continuas con derivada continua, la aproximación dada por \eqref{eq:1dwave_formula} converge a la solución de \eqref{eq:1dwave} cuando $\Delta x = c\Delta t \longrightarrow 0$.
+	\end{teorema}
 
 \section{Caso bidimensional}
 
