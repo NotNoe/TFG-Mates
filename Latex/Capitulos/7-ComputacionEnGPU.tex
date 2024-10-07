@@ -1,8 +1,8 @@
-\chapter{Computación en \ac{GPU} con CUDA y pycuda}
+\chapter{Computación en \ac{GPU} con \ac{CUDA} y pycuda}
 \label{cap:computacion}
 
 \begin{resumen}
-	En este capítulo se pretenden introducir los conceptos básicos de la programación en \ac{GPU}, en particular en el lenguaje CUDA C++ utilizado desde la librería de Python pycuda.
+	En este capítulo se pretenden introducir los conceptos básicos de la programación en \ac{GPU}, en particular en el lenguaje \ac{CUDA} C++ utilizado desde la librería de Python pycuda.
 \end{resumen}
 
 
@@ -16,10 +16,10 @@ Los \emph{kernels} son funciones de C/C++ diseñadas para ejecutarse en varios h
 
 
 \section{Programación en pycuda}
-Como adelantamos en la Sección \ref{cap:introduccion}, utilizaremos pycuda para poder ejecutar código \ac{CUDA} en la GPU desde un programa convencional en Python. Este será el proceso para hacer un programa:
+Como adelantamos en la Sección \ref{cap:introduccion}, utilizaremos pycuda para poder ejecutar código \ac{CUDA} en la \ac{GPU} desde un programa convencional en Python. Este será el proceso para hacer un programa:
 
 \begin{enumerate}
-	\item Generar archivos con la extensión .cu que contengan la definición de las funciones que vayamos a ejecutar en la GPU, escritas en \ac{CUDA}. Este será el único código que escribamos en este lenguaje de programación, todo lo demás estará escrito en Python.
+	\item Generar archivos con la extensión .cu que contengan la definición de las funciones que vayamos a ejecutar en la \ac{GPU}, escritas en \ac{CUDA}. Este será el único código que escribamos en este lenguaje de programación, todo lo demás estará escrito en Python.
 	\item Crear un programa en Python, que será el que ejecutemos. Éste será el que se encargue de compilar y llamar (mediante las funciones de pycuda) a las funciones definidas en el apartado anterior. Para hacer esto, utilizaremos el programa generateMod.py (ver \ref{code:generateMod}). Además del programa como tal, tendremos que utilizar unas funciones de pycuda para reservar memoria y llevar los datos al dispositivo (para ver más sobre la gestión de memoria en dispositivo, ver \ref{subsec:gestionDeMemoria}).
 \end{enumerate}
 
@@ -32,13 +32,13 @@ La única diferencia que nos encontramos con C/C++ en la sintaxis, es que todos 
 \begin{description}
 	\item[device] Funciones que van a ser llamadas y ejecutadas desde el dispositivo (la \ac{GPU})
 	\item[global] Funciones que van a se llamadas desde la \ac{CPU} pero ejecutadas en el dispositivo. Cuando llamemos a estas funciones les pasaremos como meta-parámetro el número de veces que se van a ejecutar.
-	\item[host] Son funciones habituales de C++. Dado que vamos a utilizar \ac{CUDA} a través de pycuda, no utilizaremos este tipo de funciones, ya que toda la programación en CPU la haremos en Python.
+	\item[host] Son funciones habituales de C++. Dado que vamos a utilizar \ac{CUDA} a través de pycuda, no utilizaremos este tipo de funciones, ya que toda la programación en \ac{CPU} la haremos en Python.
 \end{description}
 \subsection{Gestión de memoria}
 \label{subsec:gestionDeMemoria}
 Es importante comprender que el dispositivo y el host son unidades de computación diferentes. Esto significa que no comparten espacio de direcciones de memoria y, por tanto, tenemos que proceder de manera distinta dependiendo si estamos usando variables del dispositivo o del host.
 
-A pesar de la necesidad de entender el funcionamiento de la memoria, no usaremos las funciones de  gestión de memoria de CUDA, ya que la librería pycuda tiene sus propias funciones para hacer esto de manera un poco más cómoda.
+A pesar de la necesidad de entender el funcionamiento de la memoria, no usaremos las funciones de  gestión de memoria de \ac{CUDA}, ya que la librería pycuda tiene sus propias funciones para hacer esto de manera un poco más cómoda.
 \subsubsection{Memoria en el host}
 Para trabajar con la memoria en la \ac{CPU} se utilizarían las funciones habituales de C/C++ como \emph{malloc} (para reservar memoria), pero como estamos trabajando sobre Python, no tenemos que preocuparnos por eso.
 \subsubsection{Memoria en el dispositivo}
@@ -85,11 +85,11 @@ $\bullet$ En \ref{code:HelloWorldCU} podemos ver la implementación del hola mun
 $\bullet$ En \ref{code:HelloWorldOUT} vemos que la salida es la esperada.
 
 \subsection{Suma de vectores}
-Habiendo tenido ya nuestro primer contacto con pycuda, vamos ahora a poner de manifiesto la mejora de rendimiento que se puede conseguir. Vamos a realizar la suma de dos vectores de tamaños incrementalmente grandes, primero en CPU y luego en GPU, y vamos a comparar los tiempos que tarda en hacer ambas cosas.
+Habiendo tenido ya nuestro primer contacto con pycuda, vamos ahora a poner de manifiesto la mejora de rendimiento que se puede conseguir. Vamos a realizar la suma de dos vectores de tamaños incrementalmente grandes, primero en \ac{CPU} y luego en \ac{GPU}, y vamos a comparar los tiempos que tarda en hacer ambas cosas.
 
-$\bullet$ En \ref{code:vectorAddPY} podemos ver un ejemplo más complejo de código Python usando pycuda. La función \textit{add\_random\_vects} genera dos vectores de números aleatorios y los suma, primero en la CPU, y luego en GPU, midiendo el tiempo de ambos. Hay que destacar un par de cosas importantes:
+$\bullet$ En \ref{code:vectorAddPY} podemos ver un ejemplo más complejo de código Python usando pycuda. La función \textit{add\_random\_vects} genera dos vectores de números aleatorios y los suma, primero en la \ac{CPU}, y luego en \ac{GPU}, midiendo el tiempo de ambos. Hay que destacar un par de cosas importantes:
 
-Por un lado, hay que hacer la gestión de memoria, osea reservar memoria en GPU y copiar los datos con las funciones de pycuda. Por otro lado hay que gestionar el tamaño de bloque. Recordemos que los bloques pueden tener a lo sumo 1024 hilos, mientras que las grids pueden ser arbitrariamente grandes\footnote{En realidad hay un límite de tamaño dependiente del hardware, pero es tan grande que puede desestimarse.}, esto implica que podríamos simplemente ejecutar un hilo por bloque y tantas mallas como el tamaño del vector, pero si recordamos la imagen \ref{fig:mem} podemos observar que los hilos de cada bloque comparten memoria local, por lo que si hacemos el máximo uso posible de los bloques (osea tratar con bloques de 1024 hilos), haremos un menor uso de la memoria y, por tanto, obtendremos resultados notablemente mejores.
+Por un lado, hay que hacer la gestión de memoria, osea reservar memoria en \ac{GPU} y copiar los datos con las funciones de pycuda. Por otro lado hay que gestionar el tamaño de bloque. Recordemos que los bloques pueden tener a lo sumo 1024 hilos, mientras que las grids pueden ser arbitrariamente grandes\footnote{En realidad hay un límite de tamaño dependiente del hardware, pero es tan grande que puede desestimarse.}, esto implica que podríamos simplemente ejecutar un hilo por bloque y tantas mallas como el tamaño del vector, pero si recordamos la imagen \ref{fig:mem} podemos observar que los hilos de cada bloque comparten memoria local, por lo que si hacemos el máximo uso posible de los bloques (osea tratar con bloques de 1024 hilos), haremos un menor uso de la memoria y, por tanto, obtendremos resultados notablemente mejores.
 
 Por último, comprobamos que las sumas coincidan y mostramos el incremento de eficiencia. Al ejecutar este script, simplemente llamamos a la función para valores de n entre $1$ y $10^{10}$
 

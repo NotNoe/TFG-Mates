@@ -1,13 +1,5 @@
 % Fichero con acrónimos para su uso con GlossTeX
 %
-% El listado de acrónimos funciona de manera similar a las referencias
-% bibliográficas. Este  fichero es equivalente por tanto  al .bib, con
-% el listado de  los acrónimos disponibles. A lo  largo del documento,
-% cuando se  utilice alguno  de ellos, se  referencia para  indicar al
-% sistema que queremos que dicho  acrónimo aparezca en el glosario. En
-% contra de  lo que ocurre con  la bibliografía, el  texto original no
-% sufre ninguna modificación.
-%
 % Las entradas son:
 % @entry{<etiqueta>[,<item>[,<forma larga>]]} [<texto>]
 %
@@ -20,10 +12,14 @@
 % tienes ninguno  referenciado, basta con que no  definas la constante
 % \acronimosEnRelease en config.tex
 
-@entry{EDO, ,\emph{Ordinary Differnetial Equation}, Ecuaciones Diferenciales Ordinarias}
+@entry{EDO, ,Ecuaciones Diferenciales Ordinarias}
 
-@entry{EDP, ,\emph{Partial Differential Equation}, Ecuaciones en Derivadas Parciales}
+@entry{EDP, ,Ecuaciones en Derivadas Parciales}
 
-@entry{GPU, ,\emph{Graphics Processing Unit}, Unidad de Procesamiento Gráfico}
+@entry{GPU, ,\emph{Graphics Processing Unit}, Unidad de Procesamiento Gr\'afico}
 
-@entry{CUDA, ,\emph{Compute Unified Device Architecture}, Arquitectura Unificada de Dispositivos de Cómputo}
+@entry{CPU, ,\emph{Central Proccesing Unit}, Unidad Central de Procesamiento}
+
+@entry{CUDA, ,\emph{Compute Unified Device Architecture}, Arquitectura Unificada de Dispositivos de C\'omputo}
+
+@entry{MDF, ,M\'etodo de las Diferencias Finitas}

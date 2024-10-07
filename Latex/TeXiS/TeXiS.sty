@@ -329,6 +329,10 @@
     \def\debug{1}
     \def\printtodos{1}
     \def\printcoments{1}
+    \ifx\acronimosEnRelease\undefined
+    \else
+    	\def\generaacronimos{1}
+    \fi
     %\psdraft
     %  Si  se descomenta,  las  imágenes  no  se incluirán  en  el
     % documento  (por lo  que compilará más  rápido); en  su lugar

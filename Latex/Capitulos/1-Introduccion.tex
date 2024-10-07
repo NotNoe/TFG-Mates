@@ -1,12 +1,22 @@
 \chapter{Introducción}
 \label{cap:introduccion}
 
-\begin{resumen}
-	En este capítulo pretendemos introducir los objetivos de este trabajo
-\end{resumen}
 
-\section{Motivación}
-Desde el inicio de la computación, se han desarrollado métodos numéricos para aproximar soluciones de ecuaciones que no podemos resolver de manera analítica (o cuya solución exacta no se conoce). Con el auge de la computación en \ac{GPU}, que permite computar los datos en paralelo, se pueden implementar estos mismos métodos de formas más eficientes para lograr mejores resultados.
+Desde el inicio de la computación, se han desarrollado métodos numéricos para aproximar soluciones de ecuaciones que no podemos resolver de manera analítica. Con el auge de la computación en \ac{GPU}, que permite computar los datos en paralelo, se pueden implementar estos mismos métodos de formas que, como comprobaremos al final de este trabajo, son mucho más eficientes.
+
+\section{\acs{CPU} vs. \acs{GPU}}
+
+La \ac{GPU} en un componente hardware que tienen todos los ordenadores actuales optimizado para hacer los cálculos relacionados con procesamiento de imágenes.
+
+Tradicionalmente, las \acs{GPU}s solo se usaban para procesar gráficos, pero en estos últimos años, se han empezado a aprovechar las características de las \acs{GPU}s que las hacen buenas para procesar imágenes con otros fines.
+
+Normalmente, cuando ejecutamos un programa lo hacemos en la \ac{CPU}, que es la unidad de procesamiento que se encarga de la mayoría de las tareas que realiza el ordenador. Existen mecanismos (como hilos y procesos) para realizar ejecuciones en paralelo en la \ac{CPU}, y estos también pueden mejorar la eficiencia de los algoritmos, pero en mucha menos medida.
+
+El motivo de esto son los \emph{cores}. Toda unidad de procesamiento (\ac{CPU} o \ac{GPU}) tiene un número limitado de núcleos, que son la parte de la unidad que realiza las operaciones. Aunque hagamos que un programa utilice cien hilos para hacerlo más eficiente, si luego lo corremos en una \ac{CPU} con solo cuatro núcleos, el número máximo de hilos que verdaderamente pueden estar ejecutándose a la vez es cuatro. Además, cada vez que un core tiene que cambiar de un hilo a otro, se tienen que realizar una serie de tareas que pueden acabar afectando al rendimiento. La ventaja de las \acs{GPU}s respecto a las \ac{CPU}s es que tienen un gran número de núcleos (aunque funcionan más despacio y solo pueden ejecutar instrucciones simples).
+
+Veamos, por ejemplo, los números concretos que tiene la máquina donde se realizarán las pruebas rendimiento de este trabajo (para ver las especificaciones completas, ver \ref{subsec:plan_trabajo}).
+
+El procesador tiene 6 núcleos que funcionan a una frecuencia de 2.9GHz. Esto significa que el la \ac{CPU} puede realizar $1,74\times10^{10}$ operaciones en un segundo. Por otro lado, la \ac{GPU} tiene 5888 núcleos que funcionan a 1.5GHz, por lo que puede realizar $8,832\times10^{12}$ operaciones por segundo, esto es una mejora de dos órdenes de magnitud\footnote{En realidad esta mejora de eficiencia viene con un coste. Los núcleos de la \ac{GPU} son mucho más simples que los de la \ac{CPU} y sólo pueden ejecutar instrucciones básicas, por lo que si quisiéramos ejecutar un programa con instrucciones muy complejas en la \ac{GPU}, necesitaría traducir las instrucciones complejas en muchas instrucciones simples y eso contrarrestaría la mejora, por eso las \ac{GPU}s son mejores solo para ciertas cosas}.
 
 
 \section{Objetivos}
@@ -20,11 +30,11 @@ En este trabajo pretendemos estudiar la implementación de métodos de diferenci
 	\end{equation}
 	Calor (1D):
 	\begin{equation}
-		\frac{\partial u}{\partial t} = \frac{\partial ^2u}{\partial x^2} 
+		\frac{\partial u}{\partial t} = \kappa\frac{\partial ^2u}{\partial x^2} 
 	\end{equation}
 Calor (2D):
 	\begin{equation}
-		\frac{\partial u}{\partial t}=\frac{\partial^2u}{\partial x^2}+\frac{\partial^2u}{\partial y^2}
+		\frac{\partial u}{\partial t}=\kappa\left(\frac{\partial^2u}{\partial x^2}+\frac{\partial^2u}{\partial y^2}\right)
 	\end{equation}
 Ondas (1D):
 	\begin{equation}
@@ -32,99 +42,29 @@ Ondas (1D):
 	\end{equation}
 Ondas (2D):
 	\begin{equation}
-		\frac{\partial^2u}{\partial t^2}=v^2(\frac{\partial^2u}{\partial x^2}+\frac{\partial^2u}{\partial y^2})
+		\frac{\partial^2u}{\partial t^2}=v^2\left(\frac{\partial^2u}{\partial x^2}+\frac{\partial^2u}{\partial y^2}\right)
 	\end{equation}
 \end{multicols}
 
-
+Dónde $\kappa>0$ se conoce como el coeficiente de difusividad térmica y $v^2>0$ es la velocidad de propagación de la onda en el medio. 
 
 \section{Nociones generales}
-Primero de todo necesitaremos hacer un estudio matemático sobre las ecuaciones diferenciales que trataremos. Todos los algoritmos que vamos a hacer están basados en el método de las diferencias finitas, que consiste en hacer una aproximación de las derivadas por un cociente incremental en puntos cercanos. Para hacer esto, necesitaremos definir sobre todos los problemas una malla discreta de puntos, y serán en estos donde hallemos soluciones aproximadas de las soluciones.
+Como hemos comentado, todos los métodos numéricos que vamos a desarrollar en este trabajo están basados en una técnica conocida como \ac{MDF}. Esta técnica (que desarrollaremos más en el Capítulo \ref{cap:dif_fin}), se basa en aproximar las distintas derivadas de una función por un cociente incremental. Luego, estudiamos el error que introduce esa aproximación en cada uno de los casos concretos para ver cuándo podemos asegurar que estos métodos propuestos convergen.
 
-\subsection{Mallas}\label{sec:malla}
-Cuando definamos y trabajemos sobre algoritmos numéricos para aproximar las soluciones de los problemas necesitaremos discretizar el dominio, pues necesitamos trabajar con una cantidad de puntos finita para que un ordenador pueda implementar el algoritmo.
-
-Para conseguir esto, definiremos mallas, que son subconjuntos (potencialmente infinitos pero numerables) del dominio (que denotaremos como $R$) del problema en cuestión. Luego aproximaremos la solución exacta del problema en una cantidad finita de puntos de la malla.
-
-\begin{definicion}[Malla bidimensional]\label{def:malla2d}
-	Dado una ecuación diferencial con dominio $R\subseteq\mathbb{R}^2$, sean $a$, $b$, $c$ y $d$ números reales tales que $a\leq b$ y $c\leq d$, y sean $n_1$ y $n_2$ dos números naturales mayores que 1, definimos la malla bidimensional (o simplemente malla) como
-	\begin{equation}
-	M^2(a,b,c,d,n_1,n_2) := \{(a+i\Delta_1,c+j\Delta_2) \hspace{5px} | \hspace{5px} i,j\in\mathbb{Z}\}\cap R,
-	\end{equation}
-	siendo $\Delta_1:=\frac{b-a}{n_1-1}$ y $\Delta_2:=\frac{d-c}{n_2-1}$.
-\end{definicion}
-\begin{definicion}[Malla tridimensional]\label{def:malla3d}
-	Dado una ecuación diferencial con dominio $R\subseteq\mathbb{R}^3$, sean $a$, $b$, $c$, $d$, $e$ y $f$ números reales tales que $a\leq b$ y $c\leq d$, y sean $n_1$, $n_2$ y $n_3$ tres números naturales mayores que 1, definimos la malla tridimensional (o simplemente malla) como
-	\begin{equation}
-		M^3(a,b,c,d,e,f,n_1,n_2,n_3) := \{(a+i\Delta_1,c+j\Delta_2,e+k\Delta_3) \hspace{5px} | \hspace{5px} i,j,k\in\mathbb{Z}\}\cap R,
-	\end{equation}
-	siendo $\Delta_1:=\frac{b-a}{n_1-1}$, $\Delta_2:=\frac{d-c}{n_2-1}$ y $\Delta_3:=\frac{f-e}{n_3-1}$.
-\end{definicion}
-
-Normalmente los parámetros de la construcción de la malla están fijos en cada problema, por lo que normalmente nos referiremos a la malla (ya sea bidimensional o tridimensional) de cada problema simplemente como $M$, omitiendo los parámetros y la dimensión.
-
-Además, cada una de las dimensiones de la malla van a corresponder siempre a $x$, $y$ o $t$, por lo que si la dimensión $i$ del problema es $x$, diremos $\Delta x$ y $n_x$ en lugar de $\Delta_i$ y $n_i$ para que la notación sea más intuitiva.
-
-Supongamos que tenemos un problema con un dominio $R$ y una malla $M$ (ya sea bidimensional o tridimensional), sin pérdida de la generalidad podemos decir que $x$ está asociado a la primera dimensión, $y$ a la segunda y $t$ a la tercera. Denotaremos pues $x_i:=a+i\Delta x$, $y_j:=c+j\Delta y$ y $t_k:=e+k\Delta t$. Es importante apreciar que con esta notación, los puntos de la malla serán todos de la forma $(x_i,y_j,t_k)$\footnote{Nótese que todos los puntos de la malla serán de esa forma para alguna terna $(i,j,k)\in\mathbb{Z}^3$, pero el recíproco no es necesariamente cierto. Dependiendo del dominio $R$, puede pasar que haya ternas $(i,j,k)\in\mathbb{Z}^3$ tales que $(x_i,y_j,t_k)\notin R$ y por tanto el punto no pertenezca a la malla.} y que se cumple la relación $x_{n_x-1}=a+(n_x-1)*\Delta x = a + (n_x-1)*\frac{b-a}{n_x-1}=b$ para cualquiera de las tres dimensiones (cambiando $x$ por $y$ o $t$ y $a,b$ por $c,d$ o $e,f$).
-
-Una última observación necesaria es que, si el dominio $R$ es convexo (lo cuál se cumplirá en todos los problemas en los que trabajamos), todos los puntos $(x_i,y_j,t_k)$ tales que $0\leq i<n_x$, $0\leq j<n_y$ y $0\leq k<n_t$ estarán dentro de la malla.
-
-\subsubsection{Significado de las mallas}
-La idea intuitiva tras la construcción de las mallas es que el objetivo de los algoritmos será aproximar el valor de las funciones sobre una región del espacio acotada durante un tiempo concreto $T$. Como necesitamos trabajar con una cantidad finita de puntos, hacemos mallas con una densidad concreta (que afectará al rendimiento y la precisión).
-
-Los puntos que tienen todos sus índices dentro de los límites $[0,n_i)$ son los puntos que están dentro de esta superficie finita (que tiene forma de rectángulo en dos o tres dimensiones) que queremos calcular, pero puede ser que necesitemos aproximar la función en otros puntos para poder calcularlo.
-
-\subsection{Notación}\label{sec:notacion}
-Haremos ahora algunas definiciones sobre la notación con el objetivo de hacer las demostraciones futuras más legibles.
-
-	$\bullet$ Sea $f$ una función cualquiera definida en $R$, denotaremos $f_{i,j,k}:= f(x_i,y_j,t_k)$.
-	
-	$\bullet$ La solución del problema que estemos trabajando la denotaremos por $u$.
-	
-	$\bullet$ La aproximación de la solución, que es una función definida solo sobre la malla $M$, la llamaremos $U$.
-	
-	$\bullet$ Por último, definimos las diferencias finitas progresiva, regresiva y centrada sobre la variable $x$ (o cualquiera de las otras variables de manera análoga) de una función $f$ definida sobre $R$ como:
-	
-
-\begin{equation}
-	\label{eq:not_ford}
-	f^{x}(x,y,t) := \frac{f(x+\Delta x,y,t)-f(x,y,t)}{\Delta x} \Rightarrow f^{x}_{i,j,k} = \frac{f_{i+1,j,k}-f_{i,j,k}}{\Delta x},
-\end{equation}
-\begin{equation}
-	\label{eq:not_back}
-	f^{\bar{x}}(x,y,t) := \frac{f(x,y,t)-f(x-\Delta x,y,t)}{\Delta x} \Rightarrow
-	f^{\bar{x}}_{i,j,k} = \frac{f_{i,j,k}-f_{i-1,j,k}}{\Delta x},
-\end{equation}
-\begin{equation}
-	\label{eq:not_center}
-	f^{\hat{x}}(x,y,t):= \frac{1}{2}[f^{x}(x,y,t)+f^{\bar{x}}(x,y,t)]\Rightarrow
-	f^{\hat{x}}_{i,jk} = \frac{1}{2}[f^{x}_{i,j,k}+f^{\bar{x}}_{i,j,k}],
-\end{equation}
-Donde la parte derecha de las implicaciones resulta de reescribirlas utilizando la notación descrita en el primer apartado de esta sección (suponiendo que el punto $(x,y,t)$ pertenece a la malla y es de la forma $(x_i,y_j,t_k)$).
-
-Un caso de especial interés es si aplicamos (se puede comprobar que el orden no importa) primero \eqref{eq:not_ford} a $f$ y luego \eqref{eq:not_back} al resultado, que nos da la siguiente igualdad:
-
-\begin{gather}
-	\label{eq:not_second}
-	f^{x\bar{x}}(x,y,t) = f^{\bar{x}x}(x,y,t) = \\
-	\frac{1}{\Delta x^2}[f(x+\Delta x,y,t) - 2f(x,y,t)+f(x-\Delta x,y,t)] \Rightarrow \\
-	f^{x\bar{x}}_{i,j,k} = f^{\bar{x}x}_{i,j,k} = \frac{1}{\Delta x^2}[f_{x+1,j,k} - 2f_{i,j,k}+f_{i-1,j,k}].
-\end{gather}
-
-\section{Plan de trabajo}
-Para realizar el estudio, los lenguajes de programación que utilizaremos serán CUDA (una extensión de C++ que permite la ejecución de funciones -llamadas \emph{kernels}- en la \ac{GPU}) y Python, que tiene una librería llamada pycuda para ejecutar código \ac{CUDA}. Además, todos los programas aquí mostrados y los resultados obtenidos serán ejecutados en la misma máquina, con las siguientes especificaciones, no obstante, los programas están pensados para poder ejecutarse en cualquier máquina\footnote{Si se desea utilizar el script \textit{generateMod.py} en un sistema basado en Windows o MAC, podría ser necesario hacer unos pocos cambios para adaptarse a las distintas formas de nombrar las rutas en estos sistemas.}
+\section{Plan de trabajo} \label{subsec:plan_trabajo}
+Para realizar el estudio, los lenguajes de programación que utilizaremos serán \ac{CUDA} (una extensión de C++ que permite la ejecución de funciones -llamadas \emph{kernels}- en la \ac{GPU}) y Python, que tiene una librería llamada pycuda para ejecutar código \ac{CUDA}. Además, todos los programas aquí mostrados y los resultados obtenidos serán ejecutados en la misma máquina, con las siguientes especificaciones, no obstante, los programas están pensados para poder ejecutarse en cualquier máquina\footnote{Si se desea utilizar el script \textit{generateMod.py} en un sistema basado en Windows o MAC, podría ser necesario hacer unos pocos cambios para adaptarse a las distintas formas de nombrar las rutas en estos sistemas.}
 
 \begin{description}
-	\item[Procesador] Intel© Core™ i5-10400F CPU @ 2.90GHz × 6
+	\item[Procesador] Intel© Core™ i5-10400F \ac{CPU} @ 2.90GHz × 6
 	\item[RAM] 15.5 GiB
-	\item[GPU] NVIDIA Corporation GA104 [GeForce RTX 3070]
+	\item[\ac{GPU}] NVIDIA Corporation GA104 [GeForce RTX 3070]
 	\item[SO] Linux Mint 21.3 Cinnamon
 \end{description}
 
-En el Capítulo \ref{cap:computacion} explicaremos cómo ejecutar programas en la \ac{GPU} usando la librería pycuda (para lo que primero debemos de entender como programar en CUDA), seguido de un par de programas para familiarizarnos con las librerías y ver que, en efecto, pueden acelerar los tiempos de ejecución.
+En el Capítulo \ref{cap:computacion} explicaremos cómo ejecutar programas en la \ac{GPU} usando la librería pycuda (para lo que primero debemos de entender como programar en \ac{CUDA}), seguido de un par de programas para familiarizarnos con las librerías y ver que, en efecto, pueden acelerar los tiempos de ejecución.
 
 En los Capítulos \ref{cap:heat}, \ref{cap:wave} y \ref{cap:laplace} demostraremos los resultados necesarios para asegurar la existencia y unicidad de las ecuaciones del calor, ondas y Laplace respectivamente. Una vez asegurada la existencia y unicidad, propondremos un esquema numérico para aproximar la solución en los puntos de la malla y demostraremos su convergencia (que generalmente dependerán de los parámetros con los que construyamos la maya).
 
 Después de haber propuesto los métodos numéricos, en el Capítulo \ref{cap:alg_clas} los implementaremos en Python utilizando computación clásica, y analizaremos la eficiencia de estos
 
-Por último, en el Capítulo \ref{cap:alg_gpu} implementaremos los algoritmos en CUDA aprovechándonos de la computación paralela para hacerlos más rápidos que sus equivalentes en Python, y tras esto analizaremos el incremento de eficiencia que nos ha proporcionado la GPU.
+Por último, en el Capítulo \ref{cap:alg_gpu} implementaremos los algoritmos en \ac{CUDA} aprovechándonos de la computación paralela para hacerlos más rápidos que sus equivalentes en Python, y tras esto analizaremos el incremento de eficiencia que nos ha proporcionado la ac{GPU}.
