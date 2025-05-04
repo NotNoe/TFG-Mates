@@ -4,7 +4,6 @@ import numpy as np
 import utils.generateMod as generateMod
 import pycuda.driver as cuda
 from math import ceil
-from utils.timers import latency_timer, kernel_timer
 
 def resolve(
     f: Callable[[float], float],

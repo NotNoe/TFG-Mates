@@ -4,7 +4,6 @@ import warnings
 from typing import Tuple
 from pycuda import driver as cuda
 import utils.generateMod as generateMod
-from utils.timers import latency_timer, kernel_timer
 
 def __check_data(
     g_left: np.ndarray,

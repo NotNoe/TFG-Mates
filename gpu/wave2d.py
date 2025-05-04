@@ -4,7 +4,6 @@ from typing import Tuple, Callable
 from pycuda import driver as cuda
 from utils import generateMod
 from math import ceil
-from utils.timers import latency_timer, kernel_timer
 
 def __check_data(f, interval_x, interval_y, T, n_x, n_y, n_t):
     a, b = interval_x
