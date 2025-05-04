@@ -2,7 +2,7 @@ import pycuda.autoinit
 from pycuda.compiler import SourceModule
 import os, sys
 
-CUDA_FOLDER = "/mnt/datos/TFG-Mates/Codigo/CUDA"
+CUDA_FOLDER = "./CUDA"
  
 def search_dir(path, files):
     files += [f for f in os.listdir(path) if os.path.isfile(path + os.sep + f) and f[-3:]==".cu"]
