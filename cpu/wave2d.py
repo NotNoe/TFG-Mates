@@ -109,7 +109,7 @@ def resolve(
     x = np.linspace(a-dx, b+dx, n_x + 2)
     y = np.linspace(c-dx, d+dx, n_y + 2)
     # Initial conditions
-    u = np.zeros((n_x, n_y, n_t), dtype=float)
+    u = np.zeros((n_x, n_y, n_t), dtype=np.float32)
     u[:, :, 0] = f(x[1:-1, None], y[None, 1:-1])
     u[:, :, 1] = (f(x[1:-1, None], y[None, 1:-1]) + dt * g(x[1:-1, None], y[None, 1:-1]) 
                   + 0.5*lam_x2 * (f(x[2:, None], y[None, 1:-1]) - 2*f(x[1:-1, None], y[None, 1:-1]) + f(x[:-2, None], y[None, 1:-1])) +

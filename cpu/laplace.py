@@ -86,10 +86,10 @@ def resolve(
     """
 
     # Convert inputs
-    g_left   = np.asarray(g_left, float)
-    g_right  = np.asarray(g_right, float)
-    g_bottom = np.asarray(g_bottom, float)
-    g_top    = np.asarray(g_top, float)
+    g_left   = np.asarray(g_left, np.float32)
+    g_right  = np.asarray(g_right, np.float32)
+    g_bottom = np.asarray(g_bottom, np.float32)
+    g_top    = np.asarray(g_top, np.float32)
     a, b = interval_x
     c, d = interval_y
 
@@ -112,7 +112,7 @@ def resolve(
     k_max = int(1/tol)
 
     # Boundary conditions
-    u = np.zeros((n_x, n_y), dtype=float)
+    u = np.zeros((n_x, n_y), dtype=np.float32)
     u[0, :] = g_left
     u[-1, :] = g_right
     u[:, 0] = g_bottom

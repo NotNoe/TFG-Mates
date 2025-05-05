@@ -73,7 +73,7 @@ def resolve(
     x_ext = a_ext + dx * np.arange(n_x_ext)
 
     # Initial conditions
-    u_ext = np.zeros((n_x_ext, n_t), float)
+    u_ext = np.zeros((n_x_ext, n_t), np.float32)
     u_ext[:,0] = f(x_ext)
     u_ext[1:-1,1] = f(x_ext)[1:-1] + dt * g(x_ext)[1:-1] + 0.5* lam2 * (f(x_ext)[0:-2] - 2 * f(x_ext)[1:-1] + f(x_ext)[2:])
 

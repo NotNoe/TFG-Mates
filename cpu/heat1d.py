@@ -45,9 +45,9 @@ def resolve(
     Stability requires lambda <= 0.5.
     """
     # Convert inputs
-    u0 = np.asarray(u0, dtype=float)
-    g = np.asarray(g, dtype=float)
-    h = np.asarray(h, dtype=float)
+    u0 = np.asarray(u0, dtype=np.float32)
+    g = np.asarray(g, dtype=np.float32)
+    h = np.asarray(h, dtype=np.float32)
     a, b = interval
 
     # Basic checks
@@ -78,7 +78,7 @@ def resolve(
         )
 
     # Initial conditions
-    u = np.zeros((n_x, n_t), dtype=float)
+    u = np.zeros((n_x, n_t), dtype=np.float32)
     u[:, 0] = u0
 
     # Boundary conditions
