@@ -61,8 +61,8 @@ def main():
             problems[eq] = []
             if args.equations is None or eq in args.equations: #Hay que meter estas ecuaciones
                 for idx, params in enumerate(problems_yaml[eq]):
-                    #problems[eq].append(ECUACIONES_CLASES[eq](idx = idx, csv_idx = id, device = "cpu", **params))
-                    #id += 1
+                    problems[eq].append(ECUACIONES_CLASES[eq](idx = idx, csv_idx = id, device = "cpu", **params))
+                    id += 1
                     problems[eq].append(ECUACIONES_CLASES[eq](idx = idx, csv_idx = id, device = "gpu", **params))
                     id += 1
     else:
