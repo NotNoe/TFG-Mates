@@ -125,7 +125,7 @@ if __name__ == "__main__":
     # Ocultar el subplot extra
     axs_sp[-1].axis("off")
     fig_sp.supxlabel("Número de nodos de malla")
-    fig_sp.supylabel("Speed-up (CPU / GPU)")
+    fig_sp.supylabel("Aceleración (CPU / GPU)")
     fig_sp.tight_layout(rect=[0, 0.03, 1, 0.95])
     plt.savefig('out/speedup.png')
 

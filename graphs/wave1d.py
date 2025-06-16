@@ -15,18 +15,21 @@ X, Y = np.meshgrid(x_vals, y_vals)
 X = X.flatten()
 Y = Y.flatten()
 
-valid_mask = ~ ((Y > X) & (Y > 10 - X))
+valid_mask = ((Y <= X) & (Y <= 10 - X))
 red_mask = ((Y == 0) | (Y == 1)) & valid_mask
 green_mask = valid_mask & ~ red_mask & (X > 3) & (X < 7)
 blue_mask = valid_mask & ~ red_mask & ~ green_mask
 
-ax.scatter(X[red_mask], Y[red_mask], c='red', label="Condiciones iniciales o\n de contorno", zorder=2)
+ax.scatter(X[red_mask], Y[red_mask], c='red', label="Condiciones iniciales", zorder=2)
 ax.scatter(X[green_mask], Y[green_mask], c='green', label="Objetivos", zorder=2)
 ax.scatter(X[blue_mask], Y[blue_mask], c='blue', label="Puntos intermedios", zorder=2)
 
 
-ax.quiver(0, 0, 0, 1, color='purple', scale=1, scale_units='xy', zorder=2, label=r'$\Delta t$')
-ax.quiver(0, 0, 1, 0, color='blue', scale=1, scale_units='xy', zorder=2, label=r'$\Delta x$')
+ax.quiver(1, 0, 1, 0, angles='xy', scale_units='xy', scale=1, 
+            color='blue', label=r'$\Delta x$', zorder=3, width=0.003)
+ax.quiver(1, 0, 0, 1, angles='xy', scale_units='xy', scale=1, 
+            color='purple', label=r'$\Delta y$', zorder=3, width=0.003)
+    
 
 ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=5)
 
